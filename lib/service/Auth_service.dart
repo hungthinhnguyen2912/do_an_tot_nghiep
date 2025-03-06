@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:graduate/view/Home_page.dart';
 import 'package:graduate/view/Log_in_page.dart';
 import 'package:graduate/widget/Bottom_navigation_bar.dart';
+
+import '../P.dart';
 
 class AuthService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -43,11 +46,11 @@ class AuthService extends GetxController {
         } else {
           // Handle other Firebase Authentication errors
           Get.snackbar("Error", "Dont know error");
-          print(e.code);
+          // print(e.code);
         }
       } else {
         // Handle non-Firebase Authentication errors
-        print('An unexpected error occurred: $e');
+        // print('An unexpected error occurred: $e');
       }
     }
   }
@@ -83,24 +86,36 @@ class AuthService extends GetxController {
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Error Register", e.message ?? "Registration failed");
     } catch (e) {
-      Get.snackbar("Firestore Error","");
-      print("Failed to write user data: ${e.toString()}");
+      Get.snackbar("Fire store Error","");
+      // print("Failed to write user data: ${e.toString()}");
     }
   }
-  Future<void> getCurrentUser () async {
+  Future<void> getCurrentUser() async {
     User? user = _auth.currentUser;
     if (user != null) {
       DocumentSnapshot userDoc = await _firestore.collection("User").doc(user.uid).get();
       if (userDoc.exists) {
-        nameUser.value = userDoc["username"];
-        avaUrl.value = userDoc["avaUrl"];
+        // print("Dữ liệu user từ Firestore: ${userDoc.data()}");
+        nameUser.value = userDoc["username"] ?? "Không có tên";
+        avaUrl.value = userDoc["avaUrl"] ?? "";
       } else {
-        nameUser.value = "Unknown";
+        // print("Không tìm thấy user trong Firestore");
+        nameUser.value = "Không có tên";
         avaUrl.value = "";
       }
+    } else {
+      // print("Không có user nào đang đăng nhập");
     }
   }
-  Future<void> postAvaUrl () async {
 
+  Future<void> uploadAvaUrlToFirebase(String ava) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await _firestore.collection("User").doc(user.uid).update({
+        "avaUrl": ava
+      });
+      avaUrl.value = ava;
+    }
   }
+
 }

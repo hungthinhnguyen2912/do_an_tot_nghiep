@@ -3,10 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:graduate/model/History_model.dart';
-import 'package:graduate/service/ML_local_service.dart';
-import 'package:graduate/service/image_service.dart';
 import 'package:graduate/widget/app_color.dart';
-import '../service/ML_service.dart';
 import 'package:graduate/P.dart';
 
 class ClassificationPage extends StatelessWidget {
@@ -63,15 +60,13 @@ class ClassificationPage extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Obx(
-                  () => Container(
-                    child: Center(
-                      child: Text(
-                        "Result: ${P.localML.result.value}",
-                        style:  TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColor().green
-                        ),
+                  () => Center(
+                    child: Text(
+                      "Result: ${P.localML.result.value}",
+                      style:  TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColor().green
                       ),
                     ),
                   ),
@@ -94,7 +89,7 @@ class ClassificationPage extends StatelessWidget {
                           P.localML.classifyImage(
                             P.pickImage.pickedFile.value!,
                           );
-                          print('Out put: ${P.localML.result.value}');
+                          // print('Out put: ${P.localML.result.value}');
                           await P.pickImage.uploadToCloudinary();
                           History his = History(
                             _auth.currentUser!.uid,

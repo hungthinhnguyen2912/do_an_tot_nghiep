@@ -4,8 +4,14 @@ import 'package:graduate/widget/app_color.dart';
 
 import '../P.dart';
 
-class SettingPage extends StatelessWidget {
-  SettingPage({super.key});
+class SettingPage extends StatefulWidget {
+  const SettingPage({super.key});
+
+  @override
+  State<SettingPage> createState() => _SettingPageState();
+}
+
+class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -36,34 +42,99 @@ class SettingPage extends StatelessWidget {
                 Row(
                   children: [
                     Obx(() {
-                      if(P.auth.avaUrl.value == "") {
+                      if (P.auth.avaUrl.value == "") {
                         return SizedBox(
-                          child: GestureDetector(
-                            child: IconButton(onPressed: () {}, icon: Icon(Icons.add_circle,size: 24,))
-                          ),
+                         child: Icon(Icons.account_circle)
                         );
                       } else {
-                        return const CircleAvatar(
+                        return CircleAvatar(
                           radius: 24,
                           backgroundImage: NetworkImage(
-                            'https://via.placeholder.com/150',
-                          ), // Thay ảnh avatar
+                            P.auth.avaUrl.value,
+                          ),
                         );
                       }
                     }),
                     const SizedBox(width: 12),
                     Obx(
-                      () => Text(
-                        P.auth.nameUser.value.isNotEmpty
-                            ? P.auth.nameUser.value
-                            : "Loading...",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      () {
+                        if (P.auth.nameUser.value ==  "") {
+                          return Center(child: CircularProgressIndicator(),);
+                        } else {
+                          return Text(P.auth.nameUser.value,style: TextStyle(fontSize: 30,color: AppColor().white), );
+                        }
+                      }
                     ),
                   ],
+                ),
+                IconButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          padding: EdgeInsets.all(16),
+                          height: 160,
+                          child: Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: AppColor().green,
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                ),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    P.pickImage.pickAva();
+                                    P.pickImage.uploadAvaToCloudinary();
+                                    P.auth.uploadAvaUrlToFirebase(P.pickImage.avaUrl.value);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      "Pick Image from Gallery",
+                                      style: TextStyle(
+                                        color: AppColor().white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Container(
+                                width: double.infinity,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: AppColor().green,
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                ),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    P.pickImage.captureAva();
+                                    P.pickImage.uploadAvaToCloudinary();
+                                    P.auth.uploadAvaUrlToFirebase(P.auth.avaUrl.value);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      "Capture Image from Camera",
+                                      style: TextStyle(
+                                        color: AppColor().white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.add_circle, size: 24),
                 ),
               ],
             ),
