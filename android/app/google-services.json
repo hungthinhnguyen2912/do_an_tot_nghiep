@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75504627420",
+    "project_id": "datn-87213",
+    "storage_bucket": "datn-87213.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75504627420:android:fbddc81623fc2b6ac8ce19",
+        "android_client_info": {
+          "package_name": "com.example.graduate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUEwdu1Sl7dHwZBTncJ2rGzt9Ds6whPW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
