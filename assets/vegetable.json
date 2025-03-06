@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Bean",
+    "title": "Đậu",
+    "subtitle": "Đậu chứa nhiều protein, chất xơ và vitamin, là nguồn thực phẩm quan trọng trong bữa ăn hàng ngày.",
+    "imageUrl": "assets/images/Bean.png"
+  },
+  {
+    "name": "Bitter_Gourd",
+    "title": "Mướp đắng",
+    "subtitle": "Mướp đắng có vị đắng đặc trưng, giúp giảm đường huyết, thanh nhiệt và hỗ trợ tiêu hóa tốt.",
+    "imageUrl": "assets/images/Bitter_Gourd.png"
+  },
+  {
+    "name": "Bottle_Gourd",
+    "title": "Bầu",
+    "subtitle": "Quả bầu chứa nhiều nước, ít calo, có tác dụng thanh nhiệt, giải độc và hỗ trợ giảm cân.",
+    "imageUrl": "assets/images/Bottle_Gourd.png"
+  },
+  {
+    "name": "Brinjal",
+    "title": "Cà tím",
+    "subtitle": "Cà tím giàu chất chống oxy hóa, giúp bảo vệ tim mạch, cải thiện tiêu hóa và tốt cho da.",
+    "imageUrl": "assets/images/Brinjal.png"
+  },
+  {
+    "name": "Broccoli",
+    "title": "Bông cải xanh",
+    "subtitle": "Bông cải xanh chứa nhiều vitamin C, K, chất xơ và chất chống oxy hóa giúp tăng cường sức khỏe.",
+    "imageUrl": "assets/images/Broccoli.png"
+  },
+  {
+    "name": "Cabbage",
+    "title": "Bắp cải",
+    "subtitle": "Bắp cải giàu chất xơ, vitamin K và C, giúp tăng cường hệ miễn dịch và bảo vệ hệ tiêu hóa.",
+    "imageUrl": "assets/images/Cabbage.png"
+  },
+  {
+    "name": "Capsicum",
+    "title": "Ớt chuông",
+    "subtitle": "Ớt chuông có nhiều màu sắc bắt mắt, chứa chất chống oxy hóa giúp tăng cường miễn dịch và đẹp da.",
+    "imageUrl": "assets/images/Capsicum.png"
+  },
+  {
+    "name": "Carrot",
+    "title": "Cà rốt",
+    "subtitle": "Cà rốt giàu beta-carotene, giúp tăng cường thị lực, cải thiện hệ miễn dịch và làm đẹp da.",
+    "imageUrl": "assets/images/Carrot.png"
+  },
+  {
+    "name": "Cauliflower",
+    "title": "Súp lơ",
+    "subtitle": "Súp lơ giàu vitamin C, chất xơ và chất chống oxy hóa, giúp bảo vệ cơ thể khỏi ung thư.",
+    "imageUrl": "assets/images/Cauliflower.png"
+  },
+  {
+    "name": "Cucumber",
+    "title": "Dưa leo",
+    "subtitle": "Dưa leo chứa nhiều nước, giúp làm mát cơ thể, cung cấp độ ẩm cho da và hỗ trợ giảm cân.",
+    "imageUrl": "assets/images/Cucumber.png"
+  },
+  {
+    "name": "Papaya",
+    "title": "Đu đủ",
+    "subtitle": "Đu đủ giàu enzyme papain, giúp tiêu hóa tốt, tăng cường miễn dịch và làm đẹp da.",
+    "imageUrl": "assets/images/Papaya.png"
+  },
+  {
+    "name": "Potato",
+    "title": "Khoai tây",
+    "subtitle": "Khoai tây chứa nhiều carbohydrate, kali và vitamin B6, cung cấp năng lượng cho cơ thể.",
+    "imageUrl": "assets/images/Potato.png"
+  },
+  {
+    "name": "Pumpkin",
+    "title": "Bí ngô",
+    "subtitle": "Bí ngô chứa nhiều beta-carotene, vitamin A và chất chống oxy hóa giúp bảo vệ tim mạch.",
+    "imageUrl": "assets/images/Pumpkin.png"
+  },
+  {
+    "name": "Radish",
+    "title": "Củ cải",
+    "subtitle": "Củ cải giàu chất xơ và vitamin C, giúp tăng cường hệ miễn dịch và hỗ trợ gan thận hoạt động tốt.",
+    "imageUrl": "assets/images/Radish.png"
+  },
+  {
+    "name": "Tomato",
+    "title": "Cà chua",
+    "subtitle": "Cà chua giàu lycopene và vitamin C, giúp bảo vệ da, chống lão hóa và tốt cho hệ tim mạch.",
+    "imageUrl": "assets/images/Tomato.png"
+  }
+]

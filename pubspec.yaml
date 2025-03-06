@@ -73,6 +73,23 @@ flutter:
     - assets/tflite/Bfs.tflite
     - assets/tflite/MobileNet_ModelV2.tflite
     - assets/images/
+    - assets/vegetable.json
+    - assets/images/Real Bean
+    - assets/images/Real Bitter_Gourd
+    - assets/images/Real Bottle_Gourd
+    - assets/images/Real Brinjal
+    - assets/images/Real Broccoli
+    - assets/images/Real Cabbage
+    - assets/images/Real Carrot
+    - assets/images/Real Cauliflower
+    - assets/images/Real Carrot
+    - assets/images/Real Capsicum
+    - assets/images/Real Cucumber
+    - assets/images/Real Papaya
+    - assets/images/Real Potato
+    - assets/images/Real Pumpkin
+    - assets/images/Real Radish
+    - assets/images/Real Tomato
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
