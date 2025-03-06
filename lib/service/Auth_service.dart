@@ -8,6 +8,15 @@ import 'package:graduate/widget/Bottom_navigation_bar.dart';
 class AuthService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  RxString nameUser = "".obs ;
+  RxString avaUrl = "".obs;
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    getCurrentUser();
+  }
+
   Future<void> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -60,16 +69,12 @@ class AuthService extends GetxController {
       User? user = userCredential.user;
       if (user != null) {
         // Kiểm tra Firestore có bị null không
-        if (_firestore == null) {
-          throw Exception("Firestore instance is null.");
-        }
-
-        // Lưu dữ liệu vào Firestore
         await _firestore.collection('User').doc(user.uid).set({
           "uid": user.uid,
           "email": user.email,
           "username": username,
           "createdAt": FieldValue.serverTimestamp(),
+          "avaUrl" : ""
         });
 
         Get.snackbar("Success", "Registration successful! Please log in.");
@@ -82,6 +87,20 @@ class AuthService extends GetxController {
       print("Failed to write user data: ${e.toString()}");
     }
   }
+  Future<void> getCurrentUser () async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await _firestore.collection("User").doc(user.uid).get();
+      if (userDoc.exists) {
+        nameUser.value = userDoc["username"];
+        avaUrl.value = userDoc["avaUrl"];
+      } else {
+        nameUser.value = "Unknown";
+        avaUrl.value = "";
+      }
+    }
+  }
+  Future<void> postAvaUrl () async {
 
-
+  }
 }

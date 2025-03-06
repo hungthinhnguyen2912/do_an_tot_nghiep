@@ -6,19 +6,19 @@ class HistoryPage extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String userId;
 
-  HistoryPage({super.key}) : userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+  HistoryPage({super.key})
+    : userId = FirebaseAuth.instance.currentUser?.uid ?? "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Histor"),
-      ),
+      appBar: AppBar(title: Text("History")),
       body: StreamBuilder(
-        stream: _firestore
-            .collection("History")
-            .where("userId", isEqualTo: userId)
-            .snapshots(),
+        stream:
+            _firestore
+                .collection("History")
+                .where("userId", isEqualTo: userId)
+                .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -39,9 +39,19 @@ class HistoryPage extends StatelessWidget {
 
               return Card(
                 child: ListTile(
-                  leading: history['imageUrl'] != null
-                      ? Image.network(history['imageUrl'], width: 50, height: 50, fit: BoxFit.cover)
-                      : Icon(Icons.image_not_supported), // Icon thay thế nếu không có ảnh
+                  leading:
+                      history['imageUrl'] != null
+                          ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              history['imageUrl'],
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                          : Icon(Icons.image_not_supported),
+                  // Icon thay thế nếu không có ảnh
                   title: Text(history['kind'] ?? "Unknown"),
                 ),
               );
@@ -52,4 +62,3 @@ class HistoryPage extends StatelessWidget {
     );
   }
 }
-

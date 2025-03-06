@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:graduate/view/Log_in_page.dart';
 import 'package:graduate/view/Splash_page.dart';
-
+import 'P.dart';
 import 'firebase_options.dart';
 
 
 void main () async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  P.initial();
   runApp(MyApp());
 }
 

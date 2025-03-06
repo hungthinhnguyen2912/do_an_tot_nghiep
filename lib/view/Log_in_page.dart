@@ -4,6 +4,8 @@ import 'package:graduate/view/Register_page.dart';
 import 'package:graduate/widget/Text_field.dart';
 import 'package:graduate/widget/app_color.dart';
 import 'package:get/get.dart';
+import 'package:graduate/P.dart';
+
 class LogInPage extends StatefulWidget {
   LogInPage({super.key});
 
@@ -16,7 +18,6 @@ class _LogInPageState extends State<LogInPage> {
 
   final TextEditingController _passController = TextEditingController();
 
-  final AuthService _auth = Get.put(AuthService());
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class _LogInPageState extends State<LogInPage> {
               SizedBox(height: 30,),
               InkWell(
                 onTap: () async {
-                  await _auth.signIn(_emailController.text, _passController.text);
+                  await P.auth.signIn(_emailController.text, _passController.text);
                 },
                 child: Container(
                   height: 40,

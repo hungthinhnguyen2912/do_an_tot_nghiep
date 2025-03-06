@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:graduate/service/auth_service.dart';
 import 'package:graduate/view/Log_in_page.dart';
 import 'package:graduate/widget/Text_field.dart';
 import 'package:graduate/widget/app_color.dart';
 import 'package:get/get.dart';
+import 'package:graduate/P.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({super.key});
@@ -20,7 +20,6 @@ final TextEditingController _nameController = TextEditingController();
 
 final TextEditingController _confirmPassword = TextEditingController();
 
-AuthService _auth = Get.put(AuthService());
 
 class _RegisterPageState extends State<RegisterPage> {
   @override
@@ -69,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Get.snackbar("Error", "Please enter email and password.");
                     return;
                   }
-                  _auth.register(_emailController.text, _passController.text, _nameController.text);
+                  P.auth.register(_emailController.text, _passController.text, _nameController.text);
                 },
                 child: Container(
                   height: 40,
