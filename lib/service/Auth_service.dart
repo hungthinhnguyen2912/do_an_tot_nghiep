@@ -11,13 +11,18 @@ import '../P.dart';
 class AuthService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  RxString nameUser = "".obs ;
+  RxString nameUser = "".obs;
+
   RxString avaUrl = "".obs;
+
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-    getCurrentUser();
+    if (FirebaseAuth.instance.currentUser != null) {
+      getCurrentUser();
+    } else {
+      print("Chưa có user đăng nhập, không gọi getCurrentUser()");
+    }
   }
 
   Future<void> signIn(String email, String password) async {
@@ -30,11 +35,12 @@ class AuthService extends GetxController {
       // Kiểm tra xem user đã được xác thực chưa
       if (userCredential.user != null) {
         Get.snackbar("Success", "Login successful!");
+        await P.auth.getCurrentUser();
         Get.offAll(() => BottomNavBar()); // Điều hướng đến Home
       } else {
         Get.snackbar("Warning", "Login failed. Please try again.");
       }
-    }  catch (e) {
+    } catch (e) {
       if (e is FirebaseAuthException) {
         // Firebase Authentication error
         if (e.code == 'user-not-found') {
@@ -54,20 +60,26 @@ class AuthService extends GetxController {
       }
     }
   }
-  Future<void> signOut ()async {
+
+  Future<void> signOut() async {
     await _auth.signOut();
+    Get.offAll(LogInPage());
   }
+
   Future<void> register(String email, String password, String username) async {
-    if (email.trim().isEmpty || password.trim().isEmpty || username.trim().isEmpty) {
+    if (email.trim().isEmpty ||
+        password.trim().isEmpty ||
+        username.trim().isEmpty) {
       Get.snackbar("Error", "All fields are required.");
       return;
     }
 
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          );
 
       User? user = userCredential.user;
       if (user != null) {
@@ -77,7 +89,7 @@ class AuthService extends GetxController {
           "email": user.email,
           "username": username,
           "createdAt": FieldValue.serverTimestamp(),
-          "avaUrl" : ""
+          "avaUrl": "",
         });
 
         Get.snackbar("Success", "Registration successful! Please log in.");
@@ -86,36 +98,42 @@ class AuthService extends GetxController {
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Error Register", e.message ?? "Registration failed");
     } catch (e) {
-      Get.snackbar("Fire store Error","");
+      Get.snackbar("Fire store Error", "");
       // print("Failed to write user data: ${e.toString()}");
     }
   }
+
   Future<void> getCurrentUser() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      DocumentSnapshot userDoc = await _firestore.collection("User").doc(user.uid).get();
-      if (userDoc.exists) {
-        // print("Dữ liệu user từ Firestore: ${userDoc.data()}");
-        nameUser.value = userDoc["username"] ?? "Không có tên";
-        avaUrl.value = userDoc["avaUrl"] ?? "";
-      } else {
-        // print("Không tìm thấy user trong Firestore");
-        nameUser.value = "Không có tên";
-        avaUrl.value = "";
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance
+                .collection("User")
+                .doc(user.uid)
+                .get();
+        if (userDoc.exists && userDoc.data() != null) {
+          var data = userDoc.data() as Map<String, dynamic>;
+          print("Dữ liệu user từ Firestore: $data");
+
+          nameUser.value = data["username"] ?? "Không có tên";
+          avaUrl.value = data["avaUrl"] ?? "";
+        } else {
+          print("Không tìm thấy user trong Firestore");
+          nameUser.value = "Không có tên";
+          avaUrl.value = "";
+        }
       }
-    } else {
-      // print("Không có user nào đang đăng nhập");
+    } catch (e) {
+      print("Lỗi khi lấy dữ liệu người dùng: $e");
     }
   }
 
   Future<void> uploadAvaUrlToFirebase(String ava) async {
     User? user = _auth.currentUser;
     if (user != null) {
-      await _firestore.collection("User").doc(user.uid).update({
-        "avaUrl": ava
-      });
+      await _firestore.collection("User").doc(user.uid).update({"avaUrl": ava});
       avaUrl.value = ava;
     }
   }
-
 }

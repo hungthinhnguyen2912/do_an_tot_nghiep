@@ -12,7 +12,6 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +26,7 @@ class _SettingPageState extends State<SettingPage> {
             padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColor().green,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -42,29 +41,29 @@ class _SettingPageState extends State<SettingPage> {
                 Row(
                   children: [
                     Obx(() {
-                      if (P.auth.avaUrl.value == "") {
-                        return SizedBox(
-                         child: Icon(Icons.account_circle)
-                        );
+                      if (P.auth.avaUrl.value.isEmpty) {
+                        return SizedBox(child: Icon(Icons.account_circle));
                       } else {
                         return CircleAvatar(
                           radius: 24,
-                          backgroundImage: NetworkImage(
-                            P.auth.avaUrl.value,
-                          ),
+                          backgroundImage: NetworkImage(P.auth.avaUrl.value),
                         );
                       }
                     }),
                     const SizedBox(width: 12),
-                    Obx(
-                      () {
-                        if (P.auth.nameUser.value ==  "") {
-                          return Center(child: CircularProgressIndicator(),);
-                        } else {
-                          return Text(P.auth.nameUser.value,style: TextStyle(fontSize: 30,color: AppColor().white), );
-                        }
+                    Obx(() {
+                      if (P.auth.nameUser.value.isEmpty ||
+                          P.auth.nameUser.value == "Không có tên") {
+                        return Center(
+                          child: CircularProgressIndicator(color: Colors.blue),
+                        );
+                      } else {
+                        return Text(
+                          P.auth.nameUser.value,
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        );
                       }
-                    ),
+                    }),
                   ],
                 ),
                 IconButton(
@@ -82,22 +81,20 @@ class _SettingPageState extends State<SettingPage> {
                                 height: 30,
                                 decoration: BoxDecoration(
                                   color: AppColor().green,
-                                  borderRadius:
-                                  BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: GestureDetector(
                                   onTap: () async {
-                                    P.pickImage.pickAva();
-                                    P.pickImage.uploadAvaToCloudinary();
-                                    P.auth.uploadAvaUrlToFirebase(P.pickImage.avaUrl.value);
-                                    Navigator.pop(context);
+                                    await P.pickImage.pickAva();
+                                    await P.pickImage.uploadAvaToCloudinary();
+                                    await P.auth.uploadAvaUrlToFirebase(
+                                      P.pickImage.avaUrl.value,
+                                    );
                                   },
                                   child: Center(
                                     child: Text(
                                       "Pick Image from Gallery",
-                                      style: TextStyle(
-                                        color: AppColor().white,
-                                      ),
+                                      style: TextStyle(color: AppColor().white),
                                     ),
                                   ),
                                 ),
@@ -108,22 +105,20 @@ class _SettingPageState extends State<SettingPage> {
                                 height: 30,
                                 decoration: BoxDecoration(
                                   color: AppColor().green,
-                                  borderRadius:
-                                  BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: GestureDetector(
                                   onTap: () async {
                                     P.pickImage.captureAva();
                                     P.pickImage.uploadAvaToCloudinary();
-                                    P.auth.uploadAvaUrlToFirebase(P.auth.avaUrl.value);
-                                    Navigator.pop(context);
+                                    P.auth.uploadAvaUrlToFirebase(
+                                      P.auth.avaUrl.value,
+                                    );
                                   },
                                   child: Center(
                                     child: Text(
                                       "Capture Image from Camera",
-                                      style: TextStyle(
-                                        color: AppColor().white,
-                                      ),
+                                      style: TextStyle(color: AppColor().white),
                                     ),
                                   ),
                                 ),
@@ -149,6 +144,13 @@ class _SettingPageState extends State<SettingPage> {
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
+                _buildSettingsTile(
+                  "Log out",
+                  Icons.logout,
+                  onTap: () {
+                    P.auth.signOut();
+                  },
+                ),
                 _buildSettingsTile("Edit profile", Icons.person),
                 _buildSettingsTile("Change password", Icons.lock),
                 const Padding(
@@ -164,12 +166,17 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  Widget _buildSettingsTile(String title, IconData icon, {Widget? trailing}) {
+  Widget _buildSettingsTile(
+    String title,
+    IconData icon, {
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
     return ListTile(
       leading: Icon(icon, color: Colors.black54),
       title: Text(title),
       trailing: trailing ?? const Icon(Icons.chevron_right),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 
