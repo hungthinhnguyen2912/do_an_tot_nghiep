@@ -12,7 +12,7 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("History"),
+        title: Text("Histor"),
       ),
       body: StreamBuilder(
         stream: _firestore
