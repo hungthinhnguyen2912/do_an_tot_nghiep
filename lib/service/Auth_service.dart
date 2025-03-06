@@ -60,12 +60,10 @@ class AuthService extends GetxController {
       }
     }
   }
-
   Future<void> signOut() async {
     await _auth.signOut();
     Get.offAll(LogInPage());
   }
-
   Future<void> register(String email, String password, String username) async {
     if (email.trim().isEmpty ||
         password.trim().isEmpty ||
@@ -102,7 +100,6 @@ class AuthService extends GetxController {
       // print("Failed to write user data: ${e.toString()}");
     }
   }
-
   Future<void> getCurrentUser() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -128,7 +125,6 @@ class AuthService extends GetxController {
       print("Lỗi khi lấy dữ liệu người dùng: $e");
     }
   }
-
   Future<void> uploadAvaUrlToFirebase(String ava) async {
     User? user = _auth.currentUser;
     if (user != null) {
@@ -136,4 +132,26 @@ class AuthService extends GetxController {
       avaUrl.value = ava;
     }
   }
+  Future<void> reauthenticateAndChangePassword(String oldPassword, String newPassword) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null && user.email != null) {
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: oldPassword,
+        );
+
+        await user.reauthenticateWithCredential(credential);
+        await user.updatePassword(newPassword);
+        print("Mật khẩu đã được cập nhật sau khi xác thực lại!");
+        Get.snackbar("Thành công", "Mật khẩu đã được cập nhật.");
+        Get.to(LogInPage());
+      }
+    } catch (e) {
+      print("Lỗi xác thực lại: $e");
+      Get.snackbar("Lỗi", "Mật khẩu cũ không đúng hoặc có lỗi xảy ra.");
+    }
+  }
+
 }

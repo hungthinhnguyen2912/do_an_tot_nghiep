@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:graduate/view/Change_pass_page.dart';
 import 'package:graduate/widget/app_color.dart';
 
 import '../P.dart';
@@ -152,7 +153,9 @@ class _SettingPageState extends State<SettingPage> {
                   },
                 ),
                 _buildSettingsTile("Edit profile", Icons.person),
-                _buildSettingsTile("Change password", Icons.lock),
+                _buildSettingsTile("Change password", Icons.lock, onTap: () {
+                  Get.to(ChangePassPage());
+                }),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text("More", style: TextStyle(color: Colors.grey)),
