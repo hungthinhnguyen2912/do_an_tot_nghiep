@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:graduate/view/About_us_page.dart';
 import 'package:graduate/view/Change_pass_page.dart';
+import 'package:graduate/view/Edit_profile_page.dart';
 import 'package:graduate/widget/app_color.dart';
 
 import '../P.dart';
@@ -18,8 +20,11 @@ class _SettingPageState extends State<SettingPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColor().green,
-        title: const Text("Settings", style: TextStyle(color: Colors.white)),
-        leading: const Icon(Icons.settings, color: Colors.white),
+        title: Text(
+          "Setting ",
+          style: TextStyle(color: AppColor().white, fontSize: 20, fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -43,7 +48,7 @@ class _SettingPageState extends State<SettingPage> {
                   children: [
                     Obx(() {
                       if (P.auth.avaUrl.value.isEmpty) {
-                        return SizedBox(child: Icon(Icons.account_circle));
+                        return const Icon(Icons.account_circle, size: 48, color: Colors.white);
                       } else {
                         return CircleAvatar(
                           radius: 24,
@@ -53,84 +58,48 @@ class _SettingPageState extends State<SettingPage> {
                     }),
                     const SizedBox(width: 12),
                     Obx(() {
-                      if (P.auth.nameUser.value.isEmpty ||
-                          P.auth.nameUser.value == "Không có tên") {
-                        return Center(
+                      if (P.auth.nameUser.value.isEmpty || P.auth.nameUser.value == "Không có tên") {
+                        return const Center(
                           child: CircularProgressIndicator(color: Colors.blue),
                         );
                       } else {
                         return Text(
                           P.auth.nameUser.value,
-                          style: TextStyle(fontSize: 20, color: Colors.white),
+                          style: const TextStyle(fontSize: 20, color: Colors.white),
                         );
                       }
                     }),
                   ],
                 ),
+                const Spacer(),
                 IconButton(
                   onPressed: () {
                     showModalBottomSheet(
                       context: context,
                       builder: (context) {
                         return Container(
-                          padding: EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(16),
                           height: 160,
                           child: Column(
                             children: [
-                              Container(
-                                width: double.infinity,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: AppColor().green,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    await P.pickImage.pickAva();
-                                    await P.pickImage.uploadAvaToCloudinary();
-                                    await P.auth.uploadAvaUrlToFirebase(
-                                      P.pickImage.avaUrl.value,
-                                    );
-                                  },
-                                  child: Center(
-                                    child: Text(
-                                      "Pick Image from Gallery",
-                                      style: TextStyle(color: AppColor().white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              Container(
-                                width: double.infinity,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: AppColor().green,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    P.pickImage.captureAva();
-                                    P.pickImage.uploadAvaToCloudinary();
-                                    P.auth.uploadAvaUrlToFirebase(
-                                      P.auth.avaUrl.value,
-                                    );
-                                  },
-                                  child: Center(
-                                    child: Text(
-                                      "Capture Image from Camera",
-                                      style: TextStyle(color: AppColor().white),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              _buildImagePickerOption("Pick Image from Gallery", Icons.image, () async {
+                                await P.pickImage.pickAva();
+                                await P.pickImage.uploadAvaToCloudinary();
+                                await P.auth.uploadAvaUrlToFirebase(P.pickImage.avaUrl.value);
+                              }),
+                              const SizedBox(height: 20),
+                              _buildImagePickerOption("Capture Image from Camera", Icons.camera_alt, () async {
+                                await P.pickImage.captureAva();
+                                await P.pickImage.uploadAvaToCloudinary();
+                                await P.auth.uploadAvaUrlToFirebase(P.auth.avaUrl.value);
+                              }),
                             ],
                           ),
                         );
                       },
                     );
                   },
-                  icon: Icon(Icons.add_circle, size: 24),
+                  icon: const Icon(Icons.add_a_photo, size: 28, color: Colors.white),
                 ),
               ],
             ),
@@ -140,27 +109,20 @@ class _SettingPageState extends State<SettingPage> {
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text(
-                    "Account Settings",
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  child: Text("Account Settings", style: TextStyle(color: Colors.grey)),
                 ),
-                _buildSettingsTile(
-                  "Log out",
-                  Icons.logout,
-                  onTap: () {
-                    P.auth.signOut();
-                  },
-                ),
-                _buildSettingsTile("Edit profile", Icons.person),
-                _buildSettingsTile("Change password", Icons.lock, onTap: () {
-                  Get.to(ChangePassPage());
+                _buildSettingsTile("Log out", Icons.logout, onTap: () => P.auth.signOut()),
+                _buildSettingsTile("Edit profile", Icons.person, onTap: () {
+                  Get.to(EditProfilePage());
                 }),
+                _buildSettingsTile("Change password", Icons.lock, onTap: () => Get.to(ChangePassPage())),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text("More", style: TextStyle(color: Colors.grey)),
                 ),
-                _buildSettingsTile("About us", Icons.info),
+                _buildSettingsTile("About us", Icons.info,onTap: () {
+                  Get.to(AboutUsPage());
+                }),
               ],
             ),
           ),
@@ -169,25 +131,25 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  Widget _buildSettingsTile(
-    String title,
-    IconData icon, {
-    Widget? trailing,
-    VoidCallback? onTap,
-  }) {
+  Widget _buildSettingsTile(String title, IconData icon, {VoidCallback? onTap}) {
     return ListTile(
       leading: Icon(icon, color: Colors.black54),
       title: Text(title),
-      trailing: trailing ?? const Icon(Icons.chevron_right),
+      trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );
   }
 
-  Widget _buildSwitchTile(String title, bool value) {
-    return ListTile(
-      leading: const Icon(Icons.notifications, color: Colors.black54),
-      title: Text(title),
-      trailing: Switch(value: value, onChanged: (val) {}),
+  Widget _buildImagePickerOption(String title, IconData icon, VoidCallback onTap) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColor().green,
+        minimumSize: const Size(double.infinity, 40),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+      icon: Icon(icon, color: Colors.white),
+      label: Text(title, style: const TextStyle(color: Colors.white)),
+      onPressed: onTap,
     );
   }
 }

@@ -37,7 +37,7 @@ class ImageService extends GetxController {
     pickedAva.value = File(imageFile.path);
   }
 
-  void captureAva() async {
+  Future<void> captureAva() async {
     final imageFile = await picker.pickImage(source: ImageSource.camera);
     if (imageFile == null) {
       Get.snackbar("", "Can not load image");

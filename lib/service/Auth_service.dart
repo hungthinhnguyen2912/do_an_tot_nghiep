@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:graduate/view/Log_in_page.dart';
 import 'package:graduate/widget/Bottom_navigation_bar.dart';
@@ -12,7 +13,7 @@ class AuthService extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   RxString nameUser = "".obs;
-
+  RxString emailUser = "".obs;
   RxString avaUrl = "".obs;
 
   @override
@@ -115,10 +116,12 @@ class AuthService extends GetxController {
 
           nameUser.value = data["username"] ?? "Không có tên";
           avaUrl.value = data["avaUrl"] ?? "";
+          emailUser.value = user.email ?? "";
         } else {
           print("Không tìm thấy user trong Firestore");
           nameUser.value = "Không có tên";
           avaUrl.value = "";
+          emailUser.value = "";
         }
       }
     } catch (e) {
@@ -153,5 +156,38 @@ class AuthService extends GetxController {
       Get.snackbar("Lỗi", "Mật khẩu cũ không đúng hoặc có lỗi xảy ra.");
     }
   }
+  Future<void> changeUserName (String newName) async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      try {
+        _firestore.collection("User").doc(user.uid).update({
+          "username" : newName
+        });
+      } catch (e) {
+        Get.dialog(AlertDialog(title: Text("Can not change user name")));
+      }
+    } else {
+
+    }
+  }
+  // Future<void> changeEmail(String newEmail, String password) async {
+  //   FirebaseAuth auth = FirebaseAuth.instance;
+  //   User? user = auth.currentUser;
+  //
+  //   if (user != null) {
+  //     try {
+  //       AuthCredential credential = EmailAuthProvider.credential(
+  //         email: user.email!,
+  //         password: password,
+  //       );
+  //       await user.reauthenticateWithCredential(credential);
+  //       await user.updateEmail(newEmail);
+  //
+  //       print("✅ Email đã được cập nhật!");
+  //     } catch (e) {
+  //       print("❌ Lỗi khi đổi email: $e");
+  //     }
+  //   }
+  // }
 
 }
