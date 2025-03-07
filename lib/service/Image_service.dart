@@ -60,7 +60,6 @@ class ImageService extends GetxController {
       String uploadPreset = "Vegetable"; // Kiểm tra lại preset này!
 
       Uri url = Uri.parse("https://api.cloudinary.com/v1_1/$cloudName/image/upload");
-
       var request = http.MultipartRequest("POST", url);
       request.fields["upload_preset"] = uploadPreset;
       request.fields["folder"] = "Vegetables"; // Thêm thư mục để quản lý file tốt hơn

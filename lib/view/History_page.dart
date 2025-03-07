@@ -24,8 +24,8 @@ class HistoryPage extends StatelessWidget {
       body: StreamBuilder(
         stream: _firestore
             .collection("History")
-            .where("userId", isEqualTo: userId) // Lọc theo userId
-            .orderBy("timestamp", descending: true) // Sắp xếp mới nhất trước
+            .where("userId", isEqualTo: userId)
+            .orderBy("timestamp", descending: true)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -77,11 +77,10 @@ class HistoryPage extends StatelessWidget {
                     ),
                   ),
                   subtitle: Text(
-                    formattedDate, // Hiển thị thời gian
+                    formattedDate,
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   onTap: () {
-                    // Thêm hiệu ứng nhấn vào item nếu cần
                   },
                 ),
               );
@@ -91,10 +90,8 @@ class HistoryPage extends StatelessWidget {
       ),
     );
   }
-
-  /// Hàm chuyển đổi Timestamp thành chuỗi ngày giờ dễ đọc
   String formatDate(Timestamp timestamp) {
-    DateTime date = timestamp.toDate(); // Chuyển Timestamp thành DateTime
+    DateTime date = timestamp.toDate();
     return "${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}";
   }
 }
