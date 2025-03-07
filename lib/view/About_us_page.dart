@@ -19,11 +19,8 @@ class AboutUsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[300],
-              child: const Icon(Icons.person, size: 50, color: Colors.white),
-            ),
+            Image.asset("assets/images/me.jpg",width: 80,height: 120,),
+
             const SizedBox(height: 16),
             const Text(
               "Nguyễn Hưng Thịnh",

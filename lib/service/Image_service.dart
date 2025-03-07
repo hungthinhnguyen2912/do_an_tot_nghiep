@@ -11,7 +11,7 @@ class ImageService extends GetxController {
   RxString imageUrl = "".obs;
   RxString avaUrl = "".obs;
   late Rx<File?> pickedAva = Rx<File?>(null);
-  void pickImage() async {
+  Future<void> pickImage() async {
     final imageFile = await picker.pickImage(source: ImageSource.gallery);
     if (imageFile == null) {
       Get.snackbar("", "Can not load image");
@@ -20,7 +20,7 @@ class ImageService extends GetxController {
     pickedFile.value = File(imageFile.path);
   }
 
-  void captureImage() async {
+  Future<void> captureImage() async {
     final imageFile = await picker.pickImage(source: ImageSource.camera);
     if (imageFile == null) {
       Get.snackbar("", "Can not load image");
@@ -28,6 +28,7 @@ class ImageService extends GetxController {
     }
     pickedFile.value = File(imageFile.path);
   }
+
   Future<void> pickAva() async {
     final imageFile = await picker.pickImage(source: ImageSource.gallery);
     if (imageFile == null) {
@@ -119,6 +120,5 @@ class ImageService extends GetxController {
       print("Upload error: $e");
     }
   }
-
 
 }

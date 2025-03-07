@@ -1,12 +1,39 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:graduate/model/History_model.dart';
+import 'package:graduate/view/Vegetable_detail_page.dart';
 import 'package:graduate/widget/app_color.dart';
 import 'package:graduate/P.dart';
 
-class ClassificationPage extends StatelessWidget {
-  ClassificationPage({super.key});
+class ClassificationPage extends StatefulWidget {
+  const ClassificationPage({super.key});
+
+  @override
+  State<ClassificationPage> createState() => _ClassificationPageState();
+}
+
+class _ClassificationPageState extends State<ClassificationPage> {
+  List<dynamic> vegetables = [];
+  bool isLoading = false; // Trạng thái hiển thị loading
+  bool isImageSelected = false; // Trạng thái kiểm tra đã chọn ảnh chưa
+
+  @override
+  void initState() {
+    super.initState();
+    loadJsonData();
+  }
+
+  Future<void> loadJsonData() async {
+    String jsonString = await rootBundle.loadString('assets/vegetable.json');
+    setState(() {
+      vegetables = json.decode(jsonString);
+    });
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -30,9 +57,7 @@ class ClassificationPage extends StatelessWidget {
                 return Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black26, blurRadius: 8, spreadRadius: 2)
-                    ],
+                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 8, spreadRadius: 2)],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
@@ -63,18 +88,57 @@ class ClassificationPage extends StatelessWidget {
             const Spacer(),
             Column(
               children: [
-                _buildButton("Classify Image", Icons.analytics, () async {
-                  P.localML.classifyImage(P.pickImage.pickedFile.value!);
-                  await P.pickImage.uploadToCloudinary();
-                  History his = History(
-                    _auth.currentUser!.uid,
-                    kind: P.localML.result.value,
-                    imageUrl: P.pickImage.imageUrl.value,
-                  );
-                  await P.localML.postHistory(his);
+                // Chỉ hiển thị nút "Classify Image" khi ảnh đã được chọn
+                if (isImageSelected)
+                  isLoading
+                      ? CircularProgressIndicator(color: AppColor().green) // Hiển thị loading khi đang xử lý
+                      : _buildButton("Classify Image", Icons.analytics, () async {
+                    setState(() {
+                      isLoading = true; // Hiển thị loading
+                    });
+
+                    await P.localML.classifyImage(P.pickImage.pickedFile.value!);
+                    await P.pickImage.uploadToCloudinary();
+
+                    String classifiedName = P.localML.result.value;
+                    var vegetable = vegetables.firstWhere(
+                          (veg) => veg["name"] == classifiedName,
+                      orElse: () => null,
+                    );
+
+                    if (vegetable != null) {
+                      History his = History(
+                        _auth.currentUser!.uid,
+                        kind: classifiedName,
+                        imageUrl: P.pickImage.imageUrl.value,
+                      );
+                      await P.localML.postHistory(his);
+                    }
+
+                    setState(() {
+                      isLoading = false; // Ẩn loading
+                    });
+
+                    if (vegetable != null) {
+                      Get.to(VegetableDetailPage(
+                        nameVegetable: vegetable["name"],
+                        title: vegetable["title"],
+                        detail: vegetable["detail"],
+                      ));
+                    }
+                  }),
+                _buildButton("Pick Image from Gallery", Icons.image, () async {
+                  await P.pickImage.pickImage();
+                  setState(() {
+                    isImageSelected = P.pickImage.pickedFile.value != null;
+                  });
                 }),
-                _buildButton("Pick Image from Gallery", Icons.image, () => P.pickImage.pickImage()),
-                _buildButton("Capture Image from Camera", Icons.camera_alt, () => P.pickImage.captureImage()),
+                _buildButton("Capture Image from Camera", Icons.camera_alt, () async {
+                  await P.pickImage.captureImage();
+                  setState(() {
+                    isImageSelected = P.pickImage.pickedFile.value != null; // Kiểm tra đã chụp ảnh chưa
+                  });
+                }),
               ],
             ),
             const SizedBox(height: 20),

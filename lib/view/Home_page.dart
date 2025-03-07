@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:graduate/view/Vegetable_detail_page.dart';
 
 import '../widget/app_color.dart';
 
@@ -52,7 +55,7 @@ class _HomePageState extends State<HomePage> {
             var vegetable = vegetables[index];
             return GestureDetector(
               onTap: () {
-
+                Get.to(VegetableDetailPage(nameVegetable: vegetable['name'], title: vegetable['title'], detail: vegetable['detail'],));
               },
               child: Card(
                 shape: RoundedRectangleBorder(
