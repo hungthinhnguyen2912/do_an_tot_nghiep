@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +44,11 @@ class _ClassificationPageState extends State<ClassificationPage> {
         backgroundColor: AppColor().green,
         title: Text(
           "Vegetable Classification",
-          style: TextStyle(color: AppColor().white, fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: AppColor().white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -57,32 +62,47 @@ class _ClassificationPageState extends State<ClassificationPage> {
                 return Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 8, spreadRadius: 2)],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: P.pickImage.pickedFile.value != null
-                        ? Image.file(
-                      P.pickImage.pickedFile.value!,
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                    )
-                        : Container(
-                      height: 224,
-                      width: 224,
-                      color: AppColor().green.withOpacity(0.2),
-                      child: Icon(Icons.image, size: 100, color: AppColor().green),
-                    ),
+                    child:
+                        P.pickImage.pickedFile.value != null
+                            ? Image.file(
+                              P.pickImage.pickedFile.value!,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            )
+                            : Container(
+                              height: 224,
+                              width: 224,
+                              color: AppColor().green.withOpacity(0.2),
+                              child: Icon(
+                                Icons.image,
+                                size: 100,
+                                color: AppColor().green,
+                              ),
+                            ),
                   ),
                 );
               }),
             ),
             const SizedBox(height: 20),
             Obx(
-                  () => Text(
+              () => Text(
                 "Result: ${P.localML.result.value}",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColor().green),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppColor().green,
+                ),
               ),
             ),
             const Spacer(),
@@ -91,54 +111,72 @@ class _ClassificationPageState extends State<ClassificationPage> {
                 // Chỉ hiển thị nút "Classify Image" khi ảnh đã được chọn
                 if (isImageSelected)
                   isLoading
-                      ? CircularProgressIndicator(color: AppColor().green) // Hiển thị loading khi đang xử lý
-                      : _buildButton("Classify Image", Icons.analytics, () async {
-                    setState(() {
-                      isLoading = true; // Hiển thị loading
-                    });
+                      ? CircularProgressIndicator(
+                        color: AppColor().green,
+                      ) // Hiển thị loading khi đang xử lý
+                      : _buildButton(
+                        "Classify Image",
+                        Icons.analytics,
+                        () async {
+                          setState(() {
+                            isLoading = true; // Hiển thị loading
+                          });
 
-                    await P.localML.classifyImage(P.pickImage.pickedFile.value!);
-                    await P.pickImage.uploadToCloudinary();
+                          await P.localML.classifyImage(
+                            P.pickImage.pickedFile.value!,
+                          );
+                          await P.pickImage.uploadToCloudinary();
 
-                    String classifiedName = P.localML.result.value;
-                    var vegetable = vegetables.firstWhere(
-                          (veg) => veg["name"] == classifiedName,
-                      orElse: () => null,
-                    );
+                          String classifiedName = P.localML.result.value;
+                          var vegetable = vegetables.firstWhere(
+                            (veg) => veg["name"] == classifiedName,
+                            orElse: () => null,
+                          );
 
-                    if (vegetable != null) {
-                      History his = History(
-                        _auth.currentUser!.uid,
-                        kind: classifiedName,
-                        imageUrl: P.pickImage.imageUrl.value,
-                      );
-                      await P.localML.postHistory(his);
-                    }
+                          if (vegetable != null) {
+                            History his = History(
+                              _auth.currentUser!.uid,
+                              Timestamp.fromDate(DateTime.now()),
+                              kind: classifiedName,
+                              imageUrl: P.pickImage.imageUrl.value,
+                            );
 
-                    setState(() {
-                      isLoading = false; // Ẩn loading
-                    });
+                            await P.localML.postHistory(his);
+                          }
 
-                    if (vegetable != null) {
-                      Get.to(VegetableDetailPage(
-                        nameVegetable: vegetable["name"],
-                        title: vegetable["title"],
-                        detail: vegetable["detail"],
-                      ));
-                    }
-                  }),
+                          setState(() {
+                            isLoading = false; // Ẩn loading
+                          });
+
+                          if (vegetable != null) {
+                            Get.to(
+                              VegetableDetailPage(
+                                nameVegetable: vegetable["name"],
+                                title: vegetable["title"],
+                                detail: vegetable["detail"],
+                              ),
+                            );
+                          }
+                        },
+                      ),
                 _buildButton("Pick Image from Gallery", Icons.image, () async {
                   await P.pickImage.pickImage();
                   setState(() {
                     isImageSelected = P.pickImage.pickedFile.value != null;
                   });
                 }),
-                _buildButton("Capture Image from Camera", Icons.camera_alt, () async {
-                  await P.pickImage.captureImage();
-                  setState(() {
-                    isImageSelected = P.pickImage.pickedFile.value != null; // Kiểm tra đã chụp ảnh chưa
-                  });
-                }),
+                _buildButton(
+                  "Capture Image from Camera",
+                  Icons.camera_alt,
+                  () async {
+                    await P.pickImage.captureImage();
+                    setState(() {
+                      isImageSelected =
+                          P.pickImage.pickedFile.value !=
+                          null; // Kiểm tra đã chụp ảnh chưa
+                    });
+                  },
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -158,7 +196,9 @@ class _ClassificationPageState extends State<ClassificationPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor().green,
           minimumSize: Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           elevation: 5,
         ),
       ),

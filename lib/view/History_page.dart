@@ -16,7 +16,7 @@ class HistoryPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColor().green,
         title: Text(
-          "History ",
+          "History",
           style: TextStyle(color: AppColor().white, fontSize: 20, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -24,7 +24,8 @@ class HistoryPage extends StatelessWidget {
       body: StreamBuilder(
         stream: _firestore
             .collection("History")
-            .where("userId", isEqualTo: userId)
+            .where("userId", isEqualTo: userId) // Lọc theo userId
+            .orderBy("timestamp", descending: true) // Sắp xếp mới nhất trước
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -44,6 +45,10 @@ class HistoryPage extends StatelessWidget {
             itemCount: historyList.length,
             itemBuilder: (context, index) {
               var history = historyList[index];
+              Timestamp? timestamp = history['timestamp'];
+              String formattedDate = timestamp != null
+                  ? formatDate(timestamp)
+                  : "Unknown Date";
 
               return Card(
                 elevation: 4,
@@ -71,6 +76,10 @@ class HistoryPage extends StatelessWidget {
                       fontSize: 16,
                     ),
                   ),
+                  subtitle: Text(
+                    formattedDate, // Hiển thị thời gian
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
                   onTap: () {
                     // Thêm hiệu ứng nhấn vào item nếu cần
                   },
@@ -81,5 +90,11 @@ class HistoryPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// Hàm chuyển đổi Timestamp thành chuỗi ngày giờ dễ đọc
+  String formatDate(Timestamp timestamp) {
+    DateTime date = timestamp.toDate(); // Chuyển Timestamp thành DateTime
+    return "${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}";
   }
 }

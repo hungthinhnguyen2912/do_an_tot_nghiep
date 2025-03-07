@@ -109,8 +109,8 @@ class MlLocalService extends GetxController {
     return _firestore
         .collection("History")
         .where("userId", isEqualTo: userId)
+        .orderBy("timestamp", descending: true) // Sắp xếp giảm dần theo timestamp
         .snapshots()
-        .map((snapshot) =>
-        snapshot.docs.map((doc) => doc.data()).toList());
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 }
