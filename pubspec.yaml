@@ -73,6 +73,7 @@ flutter:
     - assets/tflite/InceptionV3.tflite
     - assets/tflite/Bfs.tflite
     - assets/tflite/MobileNet_ModelV2.tflite
+    - assets/tflite/model.tflite
     - assets/images/
     - assets/vegetable.json
     - assets/images/Real Bean/

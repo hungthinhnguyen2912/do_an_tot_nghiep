@@ -42,9 +42,8 @@ class MlLocalService extends GetxController {
     try {
       print("🔄 Đang tải mô hình từ assets...");
       final options = InterpreterOptions();
-      // Load model từ assets
       _interpreter = await Interpreter.fromAsset(
-        'assets/tflite/MobileNet_ModelV2.tflite',
+        'assets/tflite/model.tflite',
         options: options,
       );
       print("✅ Mô hình local đã tải thành công!");
@@ -63,8 +62,6 @@ class MlLocalService extends GetxController {
     }
 
     image = img.copyResize(image, width: 224, height: 224);
-
-    // Chuẩn bị input
     List input = List.generate(
       1,
           (i) => List.generate(
@@ -87,14 +84,47 @@ class MlLocalService extends GetxController {
         }
       }
     }
-
-    // Chuẩn bị output
     List output = List.generate(1, (i) => List.filled(15, 0.0));
-
-    // Chạy mô hình
     _interpreter.run(input, output);
+    List<double> probabilities = output[0].cast<double>();
+    int labelIndex = probabilities.indexOf(
+      probabilities.reduce((a, b) => a > b ? a : b),
+    );
+    result.value = "${labels[labelIndex]}";
+  }
 
-    // Lấy class có giá trị cao nhất
+  Future<void> classifyImageForImage229(File imageFile) async {
+    img.Image? image = img.decodeImage(imageFile.readAsBytesSync());
+    if (image == null) {
+      result.value = "Error loading image";
+      return;
+    }
+
+    image = img.copyResize(image, width: 299, height: 299);
+    List input = List.generate(
+      1,
+          (i) => List.generate(
+        224,
+            (y) => List.generate(224, (x) => List.filled(3, 0.0)),
+      ),
+    );
+
+    for (int y = 0; y < 224; y++) {
+      for (int x = 0; x < 224; x++) {
+        var pixel = image.getPixelSafe(x, y);
+        if (pixel is img.PixelUint8) {
+          num red = pixel.r;
+          num green = pixel.g;
+          num blue = pixel.b;
+
+          input[0][y][x][0] = (red.toDouble() / 127.5) - 1.0;
+          input[0][y][x][1] = (green.toDouble() / 127.5) - 1.0;
+          input[0][y][x][2] = (blue.toDouble() / 127.5) - 1.0;
+        }
+      }
+    }
+    List output = List.generate(1, (i) => List.filled(15, 0.0));
+    _interpreter.run(input, output);
     List<double> probabilities = output[0].cast<double>();
     int labelIndex = probabilities.indexOf(
       probabilities.reduce((a, b) => a > b ? a : b),
@@ -109,7 +139,7 @@ class MlLocalService extends GetxController {
     return _firestore
         .collection("History")
         .where("userId", isEqualTo: userId)
-        .orderBy("timestamp", descending: true) // Sắp xếp giảm dần theo timestamp
+        .orderBy("timestamp", descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }

@@ -108,12 +108,11 @@ class _ClassificationPageState extends State<ClassificationPage> {
             const Spacer(),
             Column(
               children: [
-                // Chỉ hiển thị nút "Classify Image" khi ảnh đã được chọn
                 if (isImageSelected)
                   isLoading
                       ? CircularProgressIndicator(
                         color: AppColor().green,
-                      ) // Hiển thị loading khi đang xử lý
+                      )
                       : _buildButton(
                         "Classify Image",
                         Icons.analytics,

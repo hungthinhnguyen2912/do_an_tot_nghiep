@@ -52,11 +52,6 @@ class MlFirebaseService extends GetxController {
 
 
   Future<void> classifyImage(File imageFile) async {
-    if (_interpreter == null) {
-      print("❌ Error: Model chưa tải xong!");
-      result.value = "Error: Model chưa tải xong!";
-      return;
-    }
     img.Image? image = img.decodeImage(imageFile.readAsBytesSync());
     if (image == null) {
       result.value = "Error loading image";
