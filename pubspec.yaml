@@ -69,11 +69,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/tflite/EfficientNetB3.tflite
-    - assets/tflite/InceptionV3.tflite
-    - assets/tflite/Bfs.tflite
-    - assets/tflite/MobileNet_ModelV2.tflite
-    - assets/tflite/model.tflite
+    - assets/tflite/
     - assets/images/
     - assets/vegetable.json
     - assets/images/Real Bean/

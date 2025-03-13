@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:graduate/service/Auth_service.dart';
 import 'package:graduate/service/Image_service.dart';
 import 'package:graduate/service/ML_local_service.dart';
-import 'package:graduate/service/ML_service.dart';
 
 class P {
   static void initial () {

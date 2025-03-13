@@ -43,15 +43,15 @@ class MlLocalService extends GetxController {
       print("🔄 Đang tải mô hình từ assets...");
       final options = InterpreterOptions();
       _interpreter = await Interpreter.fromAsset(
-        'assets/tflite/model.tflite',
+        'assets/tflite/xInception.tflite',
         options: options,
       );
       print("✅ Mô hình local đã tải thành công!");
     } catch (e) {
       print("❌ Lỗi tải mô hình local: $e");
     }
-    print("📌 Input tensor shape: ${_interpreter.getInputTensor(0).shape}");
-    print("📌 Output tensor shape: ${_interpreter.getOutputTensor(0).shape}");
+    // print("📌 Input tensor shape: ${_interpreter.getInputTensor(0).shape}");
+    // print("📌 Output tensor shape: ${_interpreter.getOutputTensor(0).shape}");
   }
 
   Future<void> classifyImage(File imageFile) async {

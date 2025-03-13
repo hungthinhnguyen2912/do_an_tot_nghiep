@@ -57,13 +57,13 @@ class ImageService extends GetxController {
     try {
       print('Start upload image to Cloudinary...');
       String cloudName = "dcqn3q7tg";
-      String uploadPreset = "Vegetable"; // Kiểm tra lại preset này!
+      String uploadPreset = "Vegetable";
 
       Uri url = Uri.parse("https://api.cloudinary.com/v1_1/$cloudName/image/upload");
 
       var request = http.MultipartRequest("POST", url);
       request.fields["upload_preset"] = uploadPreset;
-      request.fields["folder"] = "Vegetables"; // Thêm thư mục để quản lý file tốt hơn
+      request.fields["folder"] = "Vegetables";
       request.files.add(await http.MultipartFile.fromPath("file", pickedFile.value!.path));
 
       var response = await request.send();
